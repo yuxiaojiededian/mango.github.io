@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>蓝海代购 · 客户端</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #dce8f5;
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, 'Noto Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    /* 扁平直角主容器 - 蓝色调 */
+    .container {
+      max-width: 820px;
+      width: 100%;
+      background: #f0f7ff;
+      border: 3px solid #003b6f;
+      box-shadow: 8px 8px 0 rgba(0, 45, 90, 0.3);
+      padding: 2rem 2rem 2.2rem;
+    }
+
+    /* 头部区域 */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      border-bottom: 3px solid #004b87;
+      padding-bottom: 1.2rem;
+    }
+
+    .title-section h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #002856;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .sub-title {
+      color: #1a4b7a;
+      font-weight: 700;
+      margin-top: 0.2rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* 购物车图标区域 */
+    .cart-area {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .cart-icon {
+      background: #003d66;
+      color: white;
+      border: 2px solid #001a2e;
+      padding: 0.55rem 1.2rem;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 #000e1c;
+      transition: 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      position: relative;
+    }
+
+    .cart-icon:hover {
+      background: #002b4d;
+    }
+
+    .cart-count {
+      background: #ff4444;
+      color: white;
+      border-radius: 0;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      border: 1px solid #990000;
+    }
+
+    /* 地区选择器 - 扁平直角按钮组 */
+    .region-selector {
+      display: flex;
+      gap: 0;
+      border: 2px solid #005a9c;
+      flex-wrap: wrap;
+    }
+
+    .region-btn {
+      padding: 0.65rem 1.4rem;
+      border: none;
+      background: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #00335c;
+      cursor: pointer;
+      transition: all 0.15s;
+      border-right: 2px solid #005a9c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .region-btn:last-child {
+      border-right: none;
+    }
+
+    .region-btn.active {
+      background: #005a9c;
+      color: white;
+      box-shadow: inset 0 -4px 0 #001f3f;
+    }
+
+    .region-btn:hover:not(.active) {
+      background: #cddff5;
+    }
+
+    /* 管理端入口链接 */
+    .admin-link {
+      background: #002b4d;
+      color: white;
+      border: 2px solid #001a2e;
+      padding: 0.55rem 1.5rem;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-block;
+      box-shadow: 3px 3px 0 #000e1c;
+      transition: 0.1s;
+      letter-spacing: 0.5px;
+      background: #003d66;
+    }
+
+    .admin-link:hover {
+      background: #001f3f;
+      box-shadow: 2px 2px 0 #000810;
+    }
+
+    /* 商品网格 */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0 1.8rem;
+    }
+
+    /* 扁平直角商品卡片 */
+    .product-card {
+      background: white;
+      border: 2px solid #1f5b9e;
+      padding: 1.5rem 0.8rem 1.3rem;
+      box-shadow: 5px 5px 0 rgba(0, 65, 120, 0.3);
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: #ffffff;
+    }
+
+    .product-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0 #002c4e;
+    }
+
+    .emoji-icon {
+      font-size: 3rem;
+      margin-bottom: 0.4rem;
+      background: #d9e9ff;
+      padding: 0.5rem;
+      display: inline-block;
+      line-height: 1;
+      border: 2px solid #1d5590;
+    }
+
+    .product-name {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #002856;
+      margin: 0.5rem 0 0.2rem;
+      letter-spacing: 0.3px;
+      word-break: break-word;
+    }
+
+    .product-region-tag {
+      font-size: 0.8rem;
+      background: #c2daf5;
+      color: #002b4d;
+      padding: 0.25rem 0.9rem;
+      font-weight: 700;
+      margin: 0.5rem 0 0.8rem;
+      display: inline-block;
+      border: 1px solid #1d4c7c;
+    }
+
+    .price {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #00325c;
+      margin-top: 0.2rem;
+    }
+
+    .buy-btn {
+      background: #0066cc;
+      border: 2px solid #002856;
+      color: white;
+      font-weight: 700;
+      padding: 0.65rem 1.5rem;
+      margin-top: 0.9rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      letter-spacing: 0.8px;
+      box-shadow: 3px 3px 0 #001e3b;
+      transition: all 0.1s;
+      width: 100%;
+      text-transform: uppercase;
+    }
+
+    .buy-btn:hover {
+      background: #004488;
+      box-shadow: 2px 2px 0 #00162b;
+      transform: translate(1px, 1px);
+    }
+
+    .buy-btn.added {
+      background: #2e7d32;
+      border-color: #1b5e20;
+      box-shadow: 2px 2px 0 #0a2e0e;
+    }
+
+    .empty-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2.8rem;
+      color: #1d4b7a;
+      font-weight: 700;
+      background: #d6e6ff;
+      border: 2px dashed #005a9c;
+      font-size: 1.1rem;
+    }
+
+    /* 底部信息 */
+    .footer-note {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #0b3d66;
+      font-weight: 700;
+      background: #eaf3ff;
+      padding: 0.8rem;
+      border: 2px solid #1d5080;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* 购物车弹窗 */
+    .cart-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 20, 40, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .cart-modal.active {
+      display: flex;
+    }
+
+    .cart-content {
+      background: #f0f7ff;
+      border: 3px solid #003b6f;
+      box-shadow: 8px 8px 0 rgba(0, 30, 60, 0.5);
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #004b87;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .cart-header h2 {
+      color: #002856;
+      font-size: 1.5rem;
+    }
+
+    .close-btn {
+      background: #b22234;
+      color: white;
+      border: 2px solid #5a0f1a;
+      padding: 0.4rem 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #3a0a10;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #b7d0ec;
+      font-weight: 600;
+    }
+
+    .cart-total {
+      margin-top: 1.2rem;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #002856;
+      text-align: right;
+    }
+
+    .checkout-btn {
+      background: #0066cc;
+      border: 2px solid #002856;
+      color: white;
+      font-weight: 700;
+      padding: 0.7rem 2rem;
+      margin-top: 1rem;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+      box-shadow: 3px 3px 0 #001e3b;
+    }
+
+    .remove-item-btn {
+      background: #ff4444;
+      color: white;
+      border: 1px solid #990000;
+      padding: 0.2rem 0.7rem;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+      .region-selector {
+        flex-direction: column;
+        width: 100%;
+      }
+      .region-btn {
+        border-right: none;
+        border-bottom: 2px solid #005a9c;
+      }
+      .region-btn:last-child {
+        border-bottom: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <div class="header">
+      <div class="title-section">
+        <h1>🌐 蓝海代购</h1>
+        <div class="sub-title">FLAT DESIGN · 地域直选</div>
+      </div>
+      <div class="cart-area">
+        <div class="cart-icon" id="cartIcon">
+          🛒 购物车 <span class="cart-count" id="cartCount">0</span>
+        </div>
+        <a href="admin.html" class="admin-link" target="_blank">🔧 后台管理</a>
+      </div>
+    </div>
+
+    <!-- 地区选择器 -->
+    <div class="region-selector" id="regionSelector">
+      <button class="region-btn active" data-region="all">全部</button>
+      <button class="region-btn" data-region="云南">云南</button>
+      <button class="region-btn" data-region="福建">福建</button>
+      <button class="region-btn" data-region="山东">山东</button>
+    </div>
+
+    <!-- 商品展示区域 -->
+    <div class="products-grid" id="productsContainer"></div>
+
+    <!-- 底部 -->
+    <div class="footer-note">
+      <span>📦 扁平直角 · 代购甄选</span>
+      <span>✨ 实时同步后台数据</span>
+    </div>
+  </div>
+
+  <!-- 购物车弹窗 -->
+  <div class="cart-modal" id="cartModal">
+    <div class="cart-content">
+      <div class="cart-header">
+        <h2>🛒 购物车</h2>
+        <button class="close-btn" id="closeCartBtn">✕ 关闭</button>
+      </div>
+      <div id="cartItemsContainer"></div>
+      <div class="cart-total" id="cartTotal">合计：¥0.00</div>
+      <button class="checkout-btn" id="checkoutBtn">💳 立即结算</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const STORAGE_KEY = 'daigou_products';
+      const CART_KEY = 'daigou_cart';
+
+      // 默认商品数据
+      function getDefaultProducts() {
+        return [
+          { id: '1', name: '云南七彩黑花生', region: '云南', price: '39.9', emoji: '🥜' },
+          { id: '2', name: '龙岩花生', region: '福建', price: '28.8', emoji: '🥜' },
+          { id: '3', name: '云南墨红玫瑰', region: '云南', price: '45.0', emoji: '🌹' },
+          { id: '4', name: '普洱茶', region: '云南', price: '68.0', emoji: '🍵' },
+          { id: '5', name: '山东大花生', region: '山东', price: '25.5', emoji: '🥜' },
+          { id: '6', name: '山东玫瑰酱', region: '山东', price: '32.0', emoji: '🌹' }
+        ];
+      }
+
+      // 加载商品数据
+      function loadProducts() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed) && parsed.length) return parsed;
+          } catch (e) {}
+        }
+        const defaults = getDefaultProducts();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+        return defaults;
+      }
+
+      // 购物车操作
+      function getCart() {
+        const stored = localStorage.getItem(CART_KEY);
+        return stored ? JSON.parse(stored) : [];
+      }
+
+      function saveCart(cart) {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+        updateCartCount();
+      }
+
+      function addToCart(product) {
+        const cart = getCart();
+        const existing = cart.find(item => item.id === product.id);
+        if (existing) {
+          existing.quantity = (existing.quantity || 1) + 1;
+        } else {
+          cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            emoji: product.emoji,
+            region: product.region,
+            quantity: 1
+          });
+        }
+        saveCart(cart);
+        return cart;
+      }
+
+      function removeFromCart(productId) {
+        let cart = getCart();
+        cart = cart.filter(item => item.id !== productId);
+        saveCart(cart);
+        return cart;
+      }
+
+      function updateCartCount() {
+        const cart = getCart();
+        const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        document.getElementById('cartCount').textContent = totalItems;
+      }
+
+      function calculateTotal(cart) {
+        return cart.reduce((total, item) => {
+          return total + (parseFloat(item.price) * (item.quantity || 1));
+        }, 0).toFixed(2);
+      }
+
+      // 渲染购物车弹窗
+      function renderCartModal() {
+        const cart = getCart();
+        const container = document.getElementById('cartItemsContainer');
+        const totalEl = document.getElementById('cartTotal');
+
+        if (cart.length === 0) {
+          container.innerHTML = '<p style="text-align:center;padding:2rem;font-weight:700;">购物车是空的</p>';
+          totalEl.textContent = '合计：¥0.00';
+          return;
+        }
+
+        container.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <span>${item.emoji || '📦'} ${escapeHtml(item.name)}</span>
+            <span>${item.quantity || 1} x ¥${parseFloat(item.price).toFixed(2)}</span>
+            <button class="remove-item-btn" data-id="${item.id}">删除</button>
+          </div>
+        `).join('');
+
+        totalEl.textContent = `合计：¥${calculateTotal(cart)}`;
+
+        // 绑定删除按钮事件
+        container.querySelectorAll('.remove-item-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
+            removeFromCart(id);
+            renderCartModal();
+            renderProducts(currentRegion); // 刷新商品卡片按钮状态
+          });
+        });
+      }
+
+      // 工具函数
+      function escapeHtml(text) {
+        return String(text).replace(/[&<>"]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          if (m === '"') return '&quot;';
+          return m;
+        });
+      }
+
+      // DOM元素
+      const regionButtons = document.querySelectorAll('.region-btn');
+      const productsContainer = document.getElementById('productsContainer');
+      const cartIcon = document.getElementById('cartIcon');
+      const cartModal = document.getElementById('cartModal');
+      const closeCartBtn = document.getElementById('closeCartBtn');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      let currentRegion = 'all';
+      let products = loadProducts();
+
+      // 检查商品是否在购物车中
+      function isInCart(productId) {
+        const cart = getCart();
+        return cart.some(item => item.id === productId);
+      }
+
+      // 渲染商品列表
+      function renderProducts(region) {
+        let filtered = region === 'all' ? products : products.filter(p => p.region === region);
+        productsContainer.innerHTML = '';
+
+        if (filtered.length === 0) {
+          productsContainer.innerHTML = `<div class="empty-message">📭 该地区暂无商品</div>`;
+          return;
+        }
+
+        filtered.forEach(product => {
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          const priceDisplay = product.price ? `¥${parseFloat(product.price).toFixed(2)}` : '¥0.00';
+          const inCart = isInCart(product.id);
+
+          card.innerHTML = `
+            <div class="emoji-icon">${product.emoji || '📦'}</div>
+            <div class="product-name">${escapeHtml(product.name) || '未命名'}</div>
+            <span class="product-region-tag">📍 ${escapeHtml(product.region) || '未知'}</span>
+            <div class="price">${priceDisplay}</div>
+            <button class="buy-btn ${inCart ? 'added' : ''}" data-id="${product.id}">
+              ${inCart ? '✓ 已添加' : '🛒 代购'}
+            </button>
+          `;
+
+          const buyBtn = card.querySelector('.buy-btn');
+          buyBtn.addEventListener('click', () => {
+            addToCart(product);
+            // 更新按钮状态
+            buyBtn.textContent = '✓ 已添加';
+            buyBtn.classList.add('added');
+            // 更新购物车数量
+            updateCartCount();
+            // 短暂提示
+            showToast(`已添加 ${product.name} 到购物车`);
+          });
+
+          productsContainer.appendChild(card);
+        });
+      }
+
+      // 简单的toast提示
+      function showToast(message) {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+          position: fixed;
+          bottom: 2rem;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #003d66;
+          color: white;
+          padding: 0.8rem 2rem;
+          border: 2px solid #001a2e;
+          font-weight: 700;
+          z-index: 2000;
+          box-shadow: 4px 4px 0 #000e1c;
+          animation: fadeInOut 2s forwards;
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+      }
+
+      // 地区切换
+      function setActiveButton(region) {
+        regionButtons.forEach(btn => {
+          const val = btn.getAttribute('data-region');
+          btn.classList.toggle('active', val === region);
+        });
+      }
+
+      regionButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const region = this.getAttribute('data-region');
+          if (region === currentRegion) return;
+          currentRegion = region;
+          setActiveButton(region);
+          renderProducts(region);
+        });
+      });
+
+      // 购物车弹窗控制
+      cartIcon.addEventListener('click', () => {
+        renderCartModal();
+        cartModal.classList.add('active');
+      });
+
+      closeCartBtn.addEventListener('click', () => {
+        cartModal.classList.remove('active');
+      });
+
+      cartModal.addEventListener('click', (e) => {
+        if (e.target === cartModal) {
+          cartModal.classList.remove('active');
+        }
+      });
+
+      // 结算按钮
+      checkoutBtn.addEventListener('click', () => {
+        const cart = getCart();
+        if (cart.length === 0) {
+          alert('购物车是空的，请先添加商品！');
+          return;
+        }
+        const total = calculateTotal(cart);
+        const itemList = cart.map(item => `${item.emoji} ${item.name} x${item.quantity || 1}`).join('\n');
+        alert(`📋 订单确认\n\n${itemList}\n\n💰 总计：¥${total}\n\n感谢您的购买！`);
+        // 清空购物车
+        saveCart([]);
+        cartModal.classList.remove('active');
+        renderProducts(currentRegion);
+        updateCartCount();
+      });
+
+      // 监听storage变化，实现跨标签页同步
+      window.addEventListener('storage', (e) => {
+        if (e.key === STORAGE_KEY) {
+          products = loadProducts();
+          renderProducts(currentRegion);
+        }
+        if (e.key === CART_KEY) {
+          updateCartCount();
+          renderProducts(currentRegion);
+        }
+      });
+
+      // 初始渲染
+      updateCartCount();
+      renderProducts('all');
+    })();
+  </script>
+</body>
+</html>
